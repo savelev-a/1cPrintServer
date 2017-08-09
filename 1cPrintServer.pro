@@ -43,3 +43,5 @@ HEADERS += mainwindow.h \
 
 FORMS   += mainwindow.ui \
     chequewindow.ui
+
+win32:RC_ICONS += icon.ico
