@@ -90,7 +90,6 @@ void HttpClient::processRequest()
 
     else if(request->requestType == POST)
     {
-
         QJsonDocument document = QJsonDocument::fromJson(request->body.toLocal8Bit());
         QJsonArray chequesArray = document.array();
 

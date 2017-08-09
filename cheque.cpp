@@ -9,8 +9,8 @@
 Cheque::Cheque(const QJsonObject &chequeObject)
 {
     this->id = 0;
-    this->id_1c = chequeObject["IDчека"].toString();
-    this->datetime = QDateTime::fromString(chequeObject["ДатаЧека"].toString(), "dd.MM.yyyy hh.mm.ss");
+    this->number = chequeObject["НомерЧека"].toString();
+    this->datetime = QDateTime::fromString(chequeObject["ДатаЧека"].toString(), "yyyy-MM-ddThh:mm:ss");
     this->inn = chequeObject["ОрганизацииИНН"].toString();
     this->orgName = chequeObject["ОрганизацииНаименование"].toString();
     this->orgAddress = chequeObject["ОрганизацииАдрес"].toString();
@@ -21,24 +21,24 @@ Cheque::Cheque(const QJsonObject &chequeObject)
     {
         QJsonObject lineObject = lineValue.toObject();
         ChequeLine line;
-        line.lineNumber = lineObject["НомерСтроки"].toString().toInt();
+        line.lineNumber = lineObject["НомерСтроки"].toInt();
         line.artikul = lineObject["Артикул"].toString();
         line.barcode = lineObject["ШК"].toString();
         line.name = lineObject["Наименование"].toString();
-        line.quantity = lineObject["Количество"].toString().toInt();
-        line.price = lineObject["Цена"].toString().toDouble();
-        line.discountPercent = lineObject["СкидкаПроц"].toString().toDouble();
-        line.discount = lineObject["СкидкаСумма"].toString().toDouble();
-        line.summ = lineObject["СуммаИтого"].toString().toDouble();
+        line.quantity = lineObject["Количество"].toInt();
+        line.price = lineObject["Цена"].toDouble();
+        line.discountPercent = lineObject["СкидкаПроц"].toDouble();
+        line.discount = lineObject["СкидкаСумма"].toDouble();
+        line.summ = lineObject["СуммаИтого"].toDouble();
 
         this->lines.append(line);
     }
 
     QJsonObject totalsObject = chequeObject["Оплаты"].toObject();
-    this->paymentNal = totalsObject["Наличные"].toString().toDouble();
-    this->paymentBeznal = totalsObject["БезНал"].toString().toDouble();
-    this->paymentCert = totalsObject["Сертификатом"].toString().toDouble();
-    this->sdacha = totalsObject["Сдача"].toString().toDouble();
+    this->paymentNal = totalsObject["Наличные"].toDouble();
+    this->paymentBeznal = totalsObject["БезНал"].toDouble();
+    this->paymentCert = totalsObject["Сертификатом"].toDouble();
+    this->sdacha = totalsObject["Сдача"].toDouble();
 }
 
 Cheque::Cheque()

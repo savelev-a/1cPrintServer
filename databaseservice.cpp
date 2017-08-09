@@ -55,7 +55,7 @@ bool DatabaseService::saveCheque(const Cheque &cheque)
                     "sdacha, "
                     "totals) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-    queryCheque.bindValue(0, cheque.id_1c);
+    queryCheque.bindValue(0, cheque.number);
     queryCheque.bindValue(1, cheque.datetime);
     queryCheque.bindValue(2, cheque.inn);
     queryCheque.bindValue(3, cheque.orgName);
@@ -99,9 +99,9 @@ bool DatabaseService::saveCheque(const Cheque &cheque)
         queryLine.exec();
     }
 
-    queryCheque.exec();
+    bool cheque_ok = queryCheque.exec();
 
-    return db.commit();
+    return db.commit() && cheque_ok;
 }
 
 Cheque DatabaseService::getChequeById(int id)
@@ -112,7 +112,7 @@ Cheque DatabaseService::getChequeById(int id)
     queryCheque.first();
 
     cheque.id = id;
-    cheque.id_1c = queryCheque.value("ch_id").toString();
+    cheque.number = queryCheque.value("ch_id").toString();
     cheque.datetime = queryCheque.value("datetime").toDateTime();
     cheque.inn = queryCheque.value("inn").toString();
     cheque.orgName = queryCheque.value("orgName").toString();

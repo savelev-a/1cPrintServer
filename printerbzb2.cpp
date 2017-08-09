@@ -122,7 +122,7 @@ bool PrinterBZB2::printCheque(const Cheque &cheque)
 
     beginCheque();
     printLine(3, "==========================");
-    printLine(3, "Чек №00/01        ПРОДАЖА");
+    printLine(3, PrintService::lineFormatLR("Чек №" + cheque.number, "ПРОДАЖА", width));
     printLine(3, "Дата " + cheque.datetime.toString("dd.MM.yyyy   hh:mm:ss"));
     printLine(3, PrintService::lineFormatLeft("Оператор: " + cheque.seller, width));
     printLine(3, "Отдел: 1                  ");
@@ -132,8 +132,7 @@ bool PrinterBZB2::printCheque(const Cheque &cheque)
     printLine(3, "ККМ 00001                 ");
     printLine(3, "ПРОДАЖА                   ");
     printLine(3, "--------------------------");
-    printLine(3, "Чек № 00001               ");
-    printLine(3, "Фискальный № 001          ");
+    printLine(3, PrintService::lineFormatLeft("Чек №" + cheque.number, width));
     printLine(3, "Касса: 1                  ");
     printLine(3, PrintService::lineFormatLeft("Кассир: " + cheque.seller, width));
     printLine(3, PrintService::lineFormatLeft("Продавец: " + cheque.seller, width));
@@ -145,8 +144,10 @@ bool PrinterBZB2::printCheque(const Cheque &cheque)
     for(ChequeLine line : cheque.lines)
     {
         printLine(3, PrintService::lineFormatLeft(line.name, width));
-        printLine(3, PrintService::lineFormatLR(line.artikul, QString::number(line.quantity) + " " + QString::number(line.price, 'f', 2), width));
-        printLine(3, PrintService::lineFormatLR("Со скидкой " + QString::number(line.discountPercent, 'f', 1) + "%", QString::number(line.discount, 'f', 2), width));
+        printLine(3, PrintService::lineFormatLeft(line.artikul, width));
+        printLine(3, PrintService::lineFormatLR(" ", QString::number(line.quantity) + "x" + QString::number(line.price, 'f', 2), width));
+        printLine(3, PrintService::lineFormatLR("Скидка " + QString::number(line.discountPercent, 'f', 1) + "%", QString::number(line.discount, 'f', 2), width));
+        printLine(3, "                          ");
     }
     printLine(3, "--------------------------");
     printLine(3, PrintService::lineFormatLR("Итого:", QString::number(cheque.getTotalsWithoutDiscount(), 'f', 2), width));

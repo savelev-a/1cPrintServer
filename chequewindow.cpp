@@ -12,7 +12,7 @@ ChequeWindow::ChequeWindow(const Cheque &cheque, QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
 
     ui->chequeIdField->setText(QString::number(cheque.id));
-    ui->chequeId1CField->setText(cheque.id_1c);
+    ui->chequeId1CField->setText(cheque.number);
     ui->chequeInnField->setText(cheque.inn);
     ui->chequeOrganisationField->setText(cheque.orgName);
     ui->chequeAddressField->setText(cheque.orgAddress);

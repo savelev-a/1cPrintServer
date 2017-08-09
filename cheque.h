@@ -19,7 +19,7 @@ public:
     double getDiscountTotal() const;
 
     int id;
-    QString id_1c;
+    QString number;
     QDateTime datetime;
     QString inn;
     QString orgName;
