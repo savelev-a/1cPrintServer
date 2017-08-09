@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QTcpSocket>
 #include <QApplication>
+#include <QNetworkProxy>
 
 #include "application.h"
 #include "httpclient.h"
@@ -14,6 +15,7 @@ Webserver::Webserver(int port, QObject *parent) : QObject(parent)
 {
     this->port = port;
     server = new QTcpServer(this);
+    server->setProxy(QNetworkProxy::NoProxy);
     if(!server->listen(QHostAddress::Any, port))
     {
         QMessageBox::critical(0,
