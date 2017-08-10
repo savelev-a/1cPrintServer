@@ -291,8 +291,8 @@
          <string> Печать копии чека</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>img/cheque-print.png</normaloff>img/cheque-print.png</iconset>
+         <iconset resource="../../res.qrc">
+          <normaloff>:/res/img/cheque-print.png</normaloff>:/res/img/cheque-print.png</iconset>
         </property>
        </widget>
       </item>
@@ -302,8 +302,8 @@
          <string> Печать штрихкодов</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>img/barcode.png</normaloff>img/barcode.png</iconset>
+         <iconset resource="../../res.qrc">
+          <normaloff>:/res/img/barcode.png</normaloff>:/res/img/barcode.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -325,6 +325,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../res.qrc"/>
+ </resources>
  <connections/>
 </ui>

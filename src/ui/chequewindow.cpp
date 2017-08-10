@@ -1,7 +1,7 @@
 #include "chequewindow.h"
 #include "ui_chequewindow.h"
 
-#include "application.h"
+#include "../application.h"
 
 ChequeWindow::ChequeWindow(const Cheque &cheque, QWidget *parent) :
     QWidget(parent),

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "cheque.h"
+#include "../model/cheque.h"
 
 namespace Ui {
 class ChequeWindow;

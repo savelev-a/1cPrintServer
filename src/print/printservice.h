@@ -5,7 +5,7 @@
 #include <QPrinter>
 #include <QTextCodec>
 
-#include "cheque.h"
+#include "../model/cheque.h"
 
 class PrintService : public QObject
 {

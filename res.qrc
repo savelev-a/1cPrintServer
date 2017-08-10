@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/res">
+        <file>img/application-exit.png</file>
+        <file>img/barcode.png</file>
+        <file>img/cheque-print.png</file>
+        <file>img/cheque-view.png</file>
+        <file>img/logo.bmp</file>
+        <file>img/refresh.png</file>
+        <file>img/settings-cancel.png</file>
+        <file>img/settings-save.png</file>
+        <file>img/tray-icon.png</file>
+    </qresource>
+</RCC>

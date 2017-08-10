@@ -5,9 +5,9 @@
 #include <QSqlDatabase>
 #include <QSqlQueryModel>
 
-#include "cheque.h"
-#include "chequelistmodel.h"
-#include "chequelinesmodel.h"
+#include "model/cheque.h"
+#include "model/chequelistmodel.h"
+#include "model/chequelinesmodel.h"
 
 class DatabaseService : public QObject
 {

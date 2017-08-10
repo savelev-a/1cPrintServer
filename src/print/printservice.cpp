@@ -3,10 +3,10 @@
 #include <QPainter>
 #include <QFile>
 
-#include "cheque.h"
-#include "chequeline.h"
+#include "../model/cheque.h"
+#include "../model/chequeline.h"
 #include "printerbzb2.h"
-#include "application.h"
+#include "../application.h"
 
 #include <QDebug>
 

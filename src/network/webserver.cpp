@@ -5,7 +5,7 @@
 #include <QApplication>
 #include <QNetworkProxy>
 
-#include "application.h"
+#include "../application.h"
 #include "httpclient.h"
 #include "httprequest.h"
 

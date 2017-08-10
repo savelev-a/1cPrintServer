@@ -5,8 +5,8 @@
 #include <QFile>
 #include <QTextCodec>
 
-#include "cheque.h"
-#include "chequeline.h"
+#include "../model/cheque.h"
+#include "../model/chequeline.h"
 #include "printservice.h"
 
 class PrinterBZB2 : public QObject

@@ -517,8 +517,8 @@
                 <string/>
                </property>
                <property name="icon">
-                <iconset>
-                 <normaloff>img/refresh.png</normaloff>img/refresh.png</iconset>
+                <iconset resource="../../res.qrc">
+                 <normaloff>:/res/img/refresh.png</normaloff>:/res/img/refresh.png</iconset>
                </property>
               </widget>
              </item>
@@ -559,8 +559,8 @@
            <string>Сохранить все настройки</string>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>img/settings-save.png</normaloff>img/settings-save.png</iconset>
+           <iconset resource="../../res.qrc">
+            <normaloff>:/res/img/settings-save.png</normaloff>:/res/img/settings-save.png</iconset>
           </property>
          </widget>
         </item>
@@ -573,8 +573,8 @@
            <string>Отменить изменения</string>
           </property>
           <property name="icon">
-           <iconset>
-            <normaloff>img/settings-cancel.png</normaloff>img/settings-cancel.png</iconset>
+           <iconset resource="../../res.qrc">
+            <normaloff>:/res/img/settings-cancel.png</normaloff>:/res/img/settings-cancel.png</iconset>
           </property>
          </widget>
         </item>
@@ -597,6 +597,8 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="../../res.qrc"/>
+ </resources>
  <connections/>
 </ui>

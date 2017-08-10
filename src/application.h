@@ -5,9 +5,9 @@
 #include <QSettings>
 
 #include "databaseservice.h"
-#include "webserver.h"
-#include "printservice.h"
-#include "mainwindow.h"
+#include "network/webserver.h"
+#include "print/printservice.h"
+#include "ui/mainwindow.h"
 
 class Application : public QObject
 {

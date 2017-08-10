@@ -10,8 +10,8 @@
 
 #include <QDebug>
 
-#include <application.h>
-#include "cheque.h"
+#include "../application.h"
+#include "../model/cheque.h"
 
 HttpClient::HttpClient(QTcpSocket *socket) : QObject(socket)
 {

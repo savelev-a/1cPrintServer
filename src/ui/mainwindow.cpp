@@ -6,7 +6,7 @@
 #include <QPrinterInfo>
 #include <QSerialPortInfo>
 
-#include "application.h"
+#include "../application.h"
 #include "chequewindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -15,16 +15,16 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowIcon(QIcon("img/tray-icon.png"));
+    setWindowIcon(QIcon(":res/img/tray-icon.png"));
 
     trayMenu = new QMenu(this);
     chequesPopupMenu = new QMenu(this);
 
-    exitAction = new QAction(QIcon("img/application-exit.png"), "Выход", this);
+    exitAction = new QAction(QIcon(":res/img/application-exit.png"), "Выход", this);
     showWindowAction = new QAction("Окно сервера", this);
-    openChequeAction = new QAction(QIcon("img/cheque-view.png"), "Просмотр чека", this);
-    printChequeCopyAction = new QAction(QIcon("img/cheque-print.png"), "Печать копии чека", this);
-    printBarcodeAction = new QAction(QIcon("img/barcode.png"), "Печать штрихкодов", this);
+    openChequeAction = new QAction(QIcon(":res/img/cheque-view.png"), "Просмотр чека", this);
+    printChequeCopyAction = new QAction(QIcon(":res/img/cheque-print.png"), "Печать копии чека", this);
+    printBarcodeAction = new QAction(QIcon(":res/img/barcode.png"), "Печать штрихкодов", this);
 
     trayMenu->addAction(showWindowAction);
     trayMenu->addSeparator();
@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     chequesPopupMenu->addAction(printChequeCopyAction);
     chequesPopupMenu->addAction(printBarcodeAction);
 
-    trayIcon = new QSystemTrayIcon(QIcon("img/tray-icon.png"), this);
+    trayIcon = new QSystemTrayIcon(QIcon(":res/img/tray-icon.png"), this);
     trayIcon->setContextMenu(trayMenu);
     trayIcon->show();
 
