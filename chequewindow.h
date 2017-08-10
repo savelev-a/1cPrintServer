@@ -19,6 +19,7 @@ public:
 
 private slots:
     void printChequeCopy();
+    void printBarcode();
 
 private:
     Ui::ChequeWindow *ui;

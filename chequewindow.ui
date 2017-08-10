@@ -14,13 +14,6 @@
    <string>Чек</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="QPushButton" name="printCopyButton">
-     <property name="text">
-      <string>Печать копии чека</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupGeneral">
      <property name="minimumSize">
@@ -188,13 +181,6 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
-    <widget class="QPushButton" name="closeButton">
-     <property name="text">
-      <string>Закрыть</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1" colspan="2">
     <widget class="QGroupBox" name="groupTotals">
      <property name="title">
@@ -284,6 +270,53 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="3">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="printCopyButton">
+        <property name="text">
+         <string> Печать копии чека</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>img/cheque-print.png</normaloff>img/cheque-print.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="printBarcodeButton">
+        <property name="text">
+         <string> Печать штрихкодов</string>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>img/barcode.png</normaloff>img/barcode.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="closeButton">
+        <property name="text">
+         <string>Закрыть</string>
         </property>
        </widget>
       </item>

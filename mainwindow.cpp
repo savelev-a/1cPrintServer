@@ -22,14 +22,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     exitAction = new QAction(QIcon("img/application-exit.png"), "Выход", this);
     showWindowAction = new QAction("Окно сервера", this);
-    openChequeAction = new QAction("Просмотр чека", this);
-    printChequeCopyAction = new QAction("Печать копии чека", this);
+    openChequeAction = new QAction(QIcon("img/cheque-view.png"), "Просмотр чека", this);
+    printChequeCopyAction = new QAction(QIcon("img/cheque-print.png"), "Печать копии чека", this);
+    printBarcodeAction = new QAction(QIcon("img/barcode.png"), "Печать штрихкодов", this);
 
     trayMenu->addAction(showWindowAction);
     trayMenu->addSeparator();
     trayMenu->addAction(exitAction);
     chequesPopupMenu->addAction(openChequeAction);
     chequesPopupMenu->addAction(printChequeCopyAction);
+    chequesPopupMenu->addAction(printBarcodeAction);
 
     trayIcon = new QSystemTrayIcon(QIcon("img/tray-icon.png"), this);
     trayIcon->setContextMenu(trayMenu);
@@ -74,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect (ui->tableCheques, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(chequeTableContextMenu(QPoint)));
     connect(printChequeCopyAction, SIGNAL(triggered(bool)), this, SLOT(printChequeCopy()));
+    connect(printBarcodeAction, SIGNAL(triggered(bool)), this, SLOT(printBarcode()));
     connect(openChequeAction, SIGNAL(triggered(bool)), this, SLOT(showChequeWindow()));
     connect(ui->tableCheques, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showChequeWindow()));
 }
@@ -234,3 +237,13 @@ void MainWindow::refreshTableAndTotals()
     ui->totalsCertField->setText(QString::number(Application::getInstance()->databaseService->getCurrentDayCert(), 'f', 2));
 
 }
+
+void MainWindow::printBarcode()
+{
+    int row = ui->tableCheques->currentIndex().row();
+    int id = ui->tableCheques->currentIndex().sibling(row, 0).data().toInt();
+
+    Cheque cheque = Application::getInstance()->databaseService->getChequeById(id);
+    Application::getInstance()->printService->printBarcode(cheque);
+}
+

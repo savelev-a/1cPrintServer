@@ -15,11 +15,13 @@ class PrinterBZB2 : public QObject
 public:
     explicit PrinterBZB2(QString port, QObject *parent = 0);
 
-    void beginCheque();
-    void printLine(int margin, QString line);
+    void beginCheque(bool printLogo);
+    void printLine(int margin, const QString &line);
+    void printBarcode(const QString &barcodeStr);
     void endCheque();
 
     bool printCheque(const Cheque &cheque);
+    bool printChequeBarcodes(const Cheque &cheque);
     QString getLastError() const;
 
     static const int BZB2_CHEQUE_WIDTH = 26;

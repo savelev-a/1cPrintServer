@@ -48,12 +48,31 @@ bool PrintService::print(const Cheque &cheque)
     return true;
 }
 
+bool PrintService::printBarcode(const Cheque &cheque)
+{
+    switch (Application::getInstance()->settings->value("printerType", 0).toInt()) {
+    case 0:
+        break;
+    case 1:
+        break;
+    case 2:
+        PrinterBZB2 bzb2(Application::getInstance()->settings->value("printerPath", "").toString());
+        if(!bzb2.printChequeBarcodes(cheque))
+        {
+            errorStr = bzb2.getLastError();
+            return false;
+        }
+    }
+
+    return true;
+}
+
 
 void PrintService::testPrint()
 {
     PrinterBZB2 bzb2("/dev/usb/lp0");
 
-    bzb2.beginCheque();
+    bzb2.beginCheque(Application::getInstance()->settings->value("printLogo").toBool());
     bzb2.printLine(3, "==========================");
     bzb2.printLine(3, "Чек №249/28        ПРОДАЖА");
     bzb2.printLine(3, "Дата 28/07/2017   17:36:07");

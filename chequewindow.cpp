@@ -34,6 +34,7 @@ ChequeWindow::ChequeWindow(const Cheque &cheque, QWidget *parent) :
     this->cheque = cheque;
 
     connect(ui->printCopyButton, SIGNAL(clicked(bool)), this, SLOT(printChequeCopy()));
+    connect(ui->printBarcodeButton, SIGNAL(clicked(bool)), this, SLOT(printBarcode()));
     connect(ui->closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 }
 
@@ -45,4 +46,9 @@ ChequeWindow::~ChequeWindow()
 void ChequeWindow::printChequeCopy()
 {
     Application::getInstance()->printService->print(this->cheque);
+}
+
+void ChequeWindow::printBarcode()
+{
+    Application::getInstance()->printService->printBarcode(this->cheque);
 }

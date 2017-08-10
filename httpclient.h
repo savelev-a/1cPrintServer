@@ -15,6 +15,14 @@ public:
     QTcpSocket *socket;
     HttpRequest *request;
 
+    enum ErrorType
+    {
+        NoError = 0,
+        ParseError,
+        PrinterError,
+        DatabaseError
+    };
+
 signals:
     void requestReady();
 
@@ -25,7 +33,7 @@ private slots:
 private:
     QTextCodec *codec;
     void writeClient(const QString &data);
-    void httpPostWriteReply(bool chequesPrinted, const QString &errorStr);
+    void httpPostWriteReply(ErrorType errorType, const QString &errorStr);
     bool httpPostBodyLoadMode;
     long httpPostBodyBytesRecieved;
 };

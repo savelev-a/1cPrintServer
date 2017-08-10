@@ -13,7 +13,7 @@ PrinterBZB2::PrinterBZB2(QString port, QObject *parent) : QObject(parent)
     isError = false;
 }
 
-void PrinterBZB2::beginCheque()
+void PrinterBZB2::beginCheque(bool printLogo)
 {
     isError = false;
 
@@ -33,12 +33,16 @@ void PrinterBZB2::beginCheque()
         data.append(0x1B);
         data.append("N25");
 
+        //Штрихкод EAN13
+        data.append(0x1B);
+        data.append("?E");
+
         //режим буферизации
         data.append(0x1B);
         data.append("B");
 
         //печать логотипа
-        if(Application::getInstance()->settings->value("printLogo").toBool())
+        if(printLogo)
         {
             QImage colorImage("img/logo.bmp");
             QImage image = colorImage.convertToFormat(QImage::Format_Mono);
@@ -65,7 +69,7 @@ void PrinterBZB2::beginCheque()
     }
 }
 
-void PrinterBZB2::printLine(int margin, QString line)
+void PrinterBZB2::printLine(int margin, const QString &line)
 {
     QString marginStr = margin < 10 ? "M0" + QString::number(margin) : "M" + QString::number(margin);
 
@@ -76,6 +80,34 @@ void PrinterBZB2::printLine(int margin, QString line)
         data.append(0x1B);
         data.append(codec->fromUnicode(marginStr + line));
         data.append(0x0D);
+
+        portFile->write(data);
+    }
+    else
+    {
+        isError = true;
+        emit printerError("Порт принтера неожиданно закрылся: " + portFile->fileName());
+    }
+}
+
+void PrinterBZB2::printBarcode(const QString &barcodeStr)
+{
+    if(portFile->isOpen())
+    {
+        QByteArray data;
+
+        data.append(0x1B);
+        data.append("A14");
+
+        //data.append(0x1B);
+        //data.append("M3");
+
+        data.append(0x1B);
+        data.append(codec->fromUnicode("{" + barcodeStr + "}"));
+        data.append(0x0D);
+
+        data.append(0x1B);
+        data.append("A11");
 
         portFile->write(data);
     }
@@ -120,7 +152,7 @@ bool PrinterBZB2::printCheque(const Cheque &cheque)
 {
     int width = BZB2_CHEQUE_WIDTH;
 
-    beginCheque();
+    beginCheque(Application::getInstance()->settings->value("printLogo").toBool());
     printLine(3, "==========================");
     printLine(3, PrintService::lineFormatLR("Чек №" + cheque.number, "ПРОДАЖА", width));
     printLine(3, "Дата " + cheque.datetime.toString("dd.MM.yyyy   hh:mm:ss"));
@@ -165,6 +197,37 @@ bool PrinterBZB2::printCheque(const Cheque &cheque)
     endCheque();
 
     return (!isError);
+}
+
+bool PrinterBZB2::printChequeBarcodes(const Cheque &cheque)
+{
+    int width = BZB2_CHEQUE_WIDTH;
+
+    beginCheque(false);
+    printLine(3, "==========================");
+    printLine(3, PrintService::lineFormatLR("Чек №" + cheque.number, "ПРОДАЖА", width));
+    printLine(3, "Дата " + cheque.datetime.toString("dd.MM.yyyy   hh:mm:ss"));
+    printLine(3, PrintService::lineFormatLeft("Оператор: " + cheque.seller, width));
+    printLine(3, "==========================");
+    printLine(3, PrintService::lineFormatCenter(cheque.orgName, width));
+    printLine(3, "                          ");
+    for(ChequeLine line : cheque.lines)
+    {
+        printLine(3, "--------------------------");
+        printLine(3, PrintService::lineFormatLeft(line.name, width));
+        printLine(3, PrintService::lineFormatLeft(line.artikul, width));
+        printLine(3, PrintService::lineFormatLR(" ", QString::number(line.quantity) + "x" + QString::number(line.price, 'f', 2), width));
+        printLine(3, PrintService::lineFormatLR("Скидка " + QString::number(line.discountPercent, 'f', 1) + "%", QString::number(line.discount, 'f', 2), width));
+        printLine(3, PrintService::lineFormatLR("ИТОГО:", QString::number(line.summ, 'f', 2), width));
+        printLine(3, "                          ");
+        printLine(3, PrintService::lineFormatCenter("ШК ПОЗИЦИИ", width));
+        printLine(3, "                          ");
+        printBarcode(line.barcode);
+    }
+    printLine(3, "==========================");
+    endCheque();
+
+    return(!isError);
 }
 
 QString PrinterBZB2::getLastError() const

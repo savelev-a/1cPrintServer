@@ -96,45 +96,71 @@ void HttpClient::processRequest()
         for(QJsonValue chequeValue : chequesArray)
         {
             QJsonObject chequeObject = chequeValue.toObject();
+            if(chequeObject.isEmpty())
+            {
+                qDebug() << "Json object empty!";
+                httpPostWriteReply(ParseError, "Неверный формат JSON");
+                return;
+            }
             Cheque c(chequeObject);
 
             if(!Application::getInstance()->printService->print(c))
             {
-                httpPostWriteReply(false, Application::getInstance()->printService->getLastError());
+                qDebug() << "Printer error!";
+                httpPostWriteReply(PrinterError, Application::getInstance()->printService->getLastError());
                 return;
             }
 
             if(!Application::getInstance()->databaseService->saveCheque(c))
             {
-                qDebug() << Application::getInstance()->databaseService->getLastError();
+                qDebug() << "DB save error!";
+                httpPostWriteReply(DatabaseError, Application::getInstance()->databaseService->getLastError());
+                return;
             }
             Application::getInstance()->databaseService->refreshModel();
             Application::getInstance()->mainWindow->refreshTableAndTotals();
         }
 
-        httpPostWriteReply(true, QString::number(chequesArray.size()));
+        httpPostWriteReply(NoError, QString::number(chequesArray.size()));
     }
 }
 
 
-void HttpClient::httpPostWriteReply(bool chequesPrinted, const QString &errorStr)
+void HttpClient::httpPostWriteReply(ErrorType errorType, const QString &errorStr)
 {
-    if(chequesPrinted)
+    QJsonObject responce;
+
+    if(errorType == NoError)
     {
-        writeClient("HTTP/1.1 200 OK\r\n");
-        writeClient("Content-Type: text/html; charset=utf-8\r\n");
-        writeClient("\r\n");
-        writeClient("OK\r\n");
-        writeClient(errorStr + " чеков напечатано");
-        writeClient("\r\n");
+        responce.insert("result", QJsonValue("OK"));
+        responce.insert("chequesPrinted", QJsonValue(errorStr));
     }
     else
     {
+        responce.insert("result", QJsonValue("ERROR"));
+
+        switch (errorType)
+        {
+        case 1:
+            responce.insert("errorType", QJsonValue("JSON parse error"));
+            break;
+        case 2:
+            responce.insert("errorType", QJsonValue("Printer error"));
+            break;
+        case 3:
+            responce.insert("errorType", QJsonValue("Database error"));
+            break;
+        default:
+            responce.insert("errorType", QJsonValue("Unknown error"));
+            break;
+        }
+
+        responce.insert("errorText", errorStr);
+
         writeClient("HTTP/1.1 200 OK\r\n");
         writeClient("Content-Type: text/html; charset=utf-8\r\n");
         writeClient("\r\n");
-        writeClient("ERROR\r\n");
-        writeClient("Ошибка печати - " + errorStr);
+        writeClient(QJsonDocument(responce).toJson());
         writeClient("\r\n");
     }
 

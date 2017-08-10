@@ -30,6 +30,7 @@ private slots:
 
     void chequeTableContextMenu(QPoint pos);
     void printChequeCopy();
+    void printBarcode();
     void showChequeWindow();
 
 
@@ -42,6 +43,7 @@ private:
     QAction *showWindowAction;
     QAction *openChequeAction;
     QAction *printChequeCopyAction;
+    QAction *printBarcodeAction;
 
     void loadAvaiblePrinters();
     void loadAvaibleComPorts();
