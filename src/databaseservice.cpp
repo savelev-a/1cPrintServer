@@ -141,6 +141,56 @@ Cheque DatabaseService::getChequeById(int id)
     return cheque;
 }
 
+QList<Cheque> DatabaseService::getAllChequesCurrentDay()
+{
+    QList<Cheque> resultList;
+    QDate currentDate = QDate::currentDate();
+
+    QSqlQuery queryCheque("SELECT * "
+                          "FROM cheque "
+                          "WHERE datetime BETWEEN \'"
+                          + currentDate.toString("yyyy-MM-ddT00:00:00")
+                          + "\' AND \'" + currentDate.toString("yyyy-MM-ddT23:59:59")
+                          + "\'");
+
+    while(queryCheque.next())
+    {
+        Cheque cheque;
+
+        cheque.id = queryCheque.value("id").toInt();
+        cheque.number = queryCheque.value("ch_id").toString();
+        cheque.datetime = queryCheque.value("datetime").toDateTime();
+        cheque.inn = queryCheque.value("inn").toString();
+        cheque.orgName = queryCheque.value("orgName").toString();
+        cheque.orgAddress = queryCheque.value("orgAddress").toString();
+        cheque.seller = queryCheque.value("seller").toString();
+        cheque.paymentNal = queryCheque.value("paymentNal").toDouble();
+        cheque.paymentBeznal = queryCheque.value("paymentBeznal").toDouble();
+        cheque.sdacha = queryCheque.value("sdacha").toDouble();
+
+        QSqlQuery queryLines("SELECT * FROM cheque_line WHERE cheque_id = " + QString::number(cheque.id));
+        while(queryLines.next())
+        {
+            ChequeLine line;
+            line.lineNumber = queryLines.value("lineNumber").toInt();
+            line.artikul = queryLines.value("artikul").toString();
+            line.barcode = queryLines.value("barcode").toString();
+            line.name = queryLines.value("name").toString();
+            line.quantity = queryLines.value("quantity").toInt();
+            line.price = queryLines.value("price").toDouble();
+            line.discountPercent = queryLines.value("discountPercent").toDouble();
+            line.discount = queryLines.value("discount").toDouble();
+            line.summ = queryLines.value("summ").toDouble();
+            cheque.lines.append(line);
+        }
+
+        resultList.append(cheque);
+
+    }
+
+    return resultList;
+}
+
 void DatabaseService::refreshModel()
 {
     QDate currentDate = QDate::currentDate();

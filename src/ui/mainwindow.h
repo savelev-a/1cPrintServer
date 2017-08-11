@@ -31,6 +31,7 @@ private slots:
     void chequeTableContextMenu(QPoint pos);
     void printChequeCopy();
     void printBarcode();
+    void printAllBarcodes();
     void showChequeWindow();
 
 

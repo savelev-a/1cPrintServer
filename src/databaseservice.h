@@ -18,6 +18,7 @@ public:
     QString getLastError() const;
     bool saveCheque(const Cheque &cheque);
     Cheque getChequeById(int id);
+    QList<Cheque> getAllChequesCurrentDay();
     void refreshModel();
 
     ChequeListModel *chequesModel;

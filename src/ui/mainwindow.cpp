@@ -73,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->reloadSettingsButton, SIGNAL(clicked(bool)), this, SLOT(reloadSettings()));
 
     connect(ui->testPrinterButton, SIGNAL(clicked(bool)), Application::getInstance()->printService, SLOT(testPrint()));
+    connect(ui->printAllBarcodesButton, SIGNAL(clicked(bool)), this, SLOT(printAllBarcodes()));
 
     connect (ui->tableCheques, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(chequeTableContextMenu(QPoint)));
     connect(printChequeCopyAction, SIGNAL(triggered(bool)), this, SLOT(printChequeCopy()));
@@ -247,3 +248,8 @@ void MainWindow::printBarcode()
     Application::getInstance()->printService->printBarcode(cheque);
 }
 
+void MainWindow::printAllBarcodes()
+{
+    Application::getInstance()->printService->printBarcode(
+                Application::getInstance()->databaseService->getAllChequesCurrentDay());
+}

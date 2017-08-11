@@ -22,6 +22,7 @@ public:
 
     bool printCheque(const Cheque &cheque);
     bool printChequeBarcodes(const Cheque &cheque);
+    bool printChequeBarcodes(const QList<Cheque> cheques);
     QString getLastError() const;
 
     static const int BZB2_CHEQUE_WIDTH = 26;

@@ -50,6 +50,14 @@ bool PrintService::print(const Cheque &cheque)
 
 bool PrintService::printBarcode(const Cheque &cheque)
 {
+    QList<Cheque> oneChequeList;
+    oneChequeList.append(cheque);
+
+    return printBarcode(oneChequeList);
+}
+
+bool PrintService::printBarcode(const QList<Cheque> cheques)
+{
     switch (Application::getInstance()->settings->value("printerType", 0).toInt()) {
     case 0:
         break;
@@ -57,7 +65,7 @@ bool PrintService::printBarcode(const Cheque &cheque)
         break;
     case 2:
         PrinterBZB2 bzb2(Application::getInstance()->settings->value("printerPath", "").toString());
-        if(!bzb2.printChequeBarcodes(cheque))
+        if(!bzb2.printChequeBarcodes(cheques))
         {
             errorStr = bzb2.getLastError();
             return false;

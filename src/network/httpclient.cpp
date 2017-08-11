@@ -155,14 +155,16 @@ void HttpClient::httpPostWriteReply(ErrorType errorType, const QString &errorStr
             break;
         }
 
-        responce.insert("errorText", errorStr);
 
-        writeClient("HTTP/1.1 200 OK\r\n");
-        writeClient("Content-Type: text/html; charset=utf-8\r\n");
-        writeClient("\r\n");
-        writeClient(QJsonDocument(responce).toJson());
-        writeClient("\r\n");
     }
+
+    responce.insert("errorText", errorStr);
+
+    writeClient("HTTP/1.1 200 OK\r\n");
+    writeClient("Content-Type: text/html; charset=utf-8\r\n");
+    writeClient("\r\n");
+    writeClient(QJsonDocument(responce).toJson());
+    writeClient("\r\n");
 
     socket->close();
 }

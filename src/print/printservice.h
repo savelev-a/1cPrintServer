@@ -16,6 +16,7 @@ public:
     bool print(const QString &data);
     bool print(const Cheque &cheque);
     bool printBarcode(const Cheque &cheque);
+    bool printBarcode(const QList<Cheque> cheques);
 
     QString getLastError() const;
 

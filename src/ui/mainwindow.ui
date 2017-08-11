@@ -64,6 +64,16 @@
            <string>Итого за день</string>
           </property>
           <layout class="QGridLayout" name="gridLayout">
+           <item row="1" column="1">
+            <widget class="QLabel" name="totalsDaySumField">
+             <property name="text">
+              <string>0</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
            <item row="2" column="1">
             <widget class="QLabel" name="totalsNalField">
              <property name="text">
@@ -100,16 +110,6 @@
            </item>
            <item row="3" column="1">
             <widget class="QLabel" name="totalsBeznalField">
-             <property name="text">
-              <string>0</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="totalsDaySumField">
              <property name="text">
               <string>0</string>
              </property>
@@ -161,6 +161,17 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item row="6" column="0" colspan="2">
+            <widget class="QPushButton" name="printAllBarcodesButton">
+             <property name="text">
+              <string> Напечатать штрихкоды</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../../res.qrc">
+               <normaloff>:/res/img/barcode.png</normaloff>:/res/img/barcode.png</iconset>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
