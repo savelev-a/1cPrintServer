@@ -16,7 +16,7 @@
 HttpClient::HttpClient(QTcpSocket *socket) : QObject(socket)
 {
     this->socket = socket;
-    this->codec = QTextCodec::codecForName("UTF-8");
+    this->codec = QTextCodec::codecForName("CP1251");
     this->request = new HttpRequest(this);
 
     httpPostBodyLoadMode = false;
@@ -32,12 +32,14 @@ void HttpClient::readClient()
 {
     while(socket->bytesAvailable())
     {
-        QString line = codec->toUnicode(socket->readLine());
+        QByteArray bytes(socket->readLine());
+        QString line = codec->toUnicode(bytes);
+        qDebug() << line;
 
         if(httpPostBodyLoadMode)
         {
             request->body.append(line);
-            httpPostBodyBytesRecieved += line.toLocal8Bit().length();
+            httpPostBodyBytesRecieved += bytes.length();
             if(httpPostBodyBytesRecieved >= request->contentLength)
             {
                 httpPostBodyLoadMode = false;
@@ -69,7 +71,7 @@ void HttpClient::readClient()
 
 void HttpClient::writeClient(const QString &data)
 {
-    socket->write(data.toUtf8());
+    socket->write(codec->fromUnicode(data));
     socket->waitForBytesWritten(1000);
 }
 
@@ -78,7 +80,7 @@ void HttpClient::processRequest()
     if(request->requestType == GET)
     {
         writeClient("HTTP/1.1 200 OK\r\n");
-        writeClient("Content-Type: text/html; charset=utf-8\r\n");
+        writeClient("Content-Type: text/html; charset=windows-1251\r\n");
         writeClient("\r\n");
         writeClient("<html><head><title>1cPrintServer</title></head><body>"
                     "Welcome to 1C Print Server!<br>");
@@ -90,8 +92,16 @@ void HttpClient::processRequest()
 
     else if(request->requestType == POST)
     {
+        //qDebug() << request->body;
         QJsonDocument document = QJsonDocument::fromJson(request->body.toLocal8Bit());
         QJsonArray chequesArray = document.array();
+
+        if(chequesArray.isEmpty())
+        {
+            qDebug() << "Json array empty!";
+            httpPostWriteReply(ParseError, "Чек не напечатан! Проверьте заполнение реквизитов.");
+            return;
+        }
 
         for(QJsonValue chequeValue : chequesArray)
         {
@@ -107,14 +117,14 @@ void HttpClient::processRequest()
             if(!Application::getInstance()->printService->print(c))
             {
                 qDebug() << "Printer error!";
-                httpPostWriteReply(PrinterError, Application::getInstance()->printService->getLastError());
+                httpPostWriteReply(PrinterError, "Ошибка печати чека: " + Application::getInstance()->printService->getLastError());
                 return;
             }
 
             if(!Application::getInstance()->databaseService->saveCheque(c))
             {
                 qDebug() << "DB save error!";
-                httpPostWriteReply(DatabaseError, Application::getInstance()->databaseService->getLastError());
+                httpPostWriteReply(DatabaseError, "Ошибка сохранения чека: " + Application::getInstance()->databaseService->getLastError());
                 return;
             }
             Application::getInstance()->databaseService->refreshModel();
@@ -141,13 +151,13 @@ void HttpClient::httpPostWriteReply(ErrorType errorType, const QString &errorStr
 
         switch (errorType)
         {
-        case 1:
+        case ParseError:
             responce.insert("errorType", QJsonValue("JSON parse error"));
             break;
-        case 2:
+        case PrinterError:
             responce.insert("errorType", QJsonValue("Printer error"));
             break;
-        case 3:
+        case DatabaseError:
             responce.insert("errorType", QJsonValue("Database error"));
             break;
         default:
@@ -161,7 +171,7 @@ void HttpClient::httpPostWriteReply(ErrorType errorType, const QString &errorStr
     responce.insert("errorText", errorStr);
 
     writeClient("HTTP/1.1 200 OK\r\n");
-    writeClient("Content-Type: text/html; charset=utf-8\r\n");
+    writeClient("Content-Type: text/html; charset=windows-1251\r\n");
     writeClient("\r\n");
     writeClient(QJsonDocument(responce).toJson());
     writeClient("\r\n");
