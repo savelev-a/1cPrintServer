@@ -14,8 +14,8 @@ QVariant ChequeListModel::data(const QModelIndex &item, int role) const
     if(role == Qt::DisplayRole && item.column() == DatetimeCol)
     {
         QVariant data = item.data(Qt::EditRole);
-        //QString datetimeStr = data.toDateTime().toString("dd.MM.yyyy - hh:mm:ss");
-        QString datetimeStr = data.toDateTime().toString("hh:mm:ss");
+        QString datetimeStr = data.toDateTime().toString("dd.MM.yyyy  hh:mm:ss");
+        //QString datetimeStr = data.toDateTime().toString("hh:mm:ss");
         return QVariant(datetimeStr);
     }
     else if(role == Qt::DisplayRole && item.column() == SummCol)

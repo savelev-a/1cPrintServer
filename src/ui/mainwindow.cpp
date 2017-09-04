@@ -44,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableCheques->horizontalHeader()->setStretchLastSection(true);
     ui->tableCheques->setSelectionBehavior(QTableView::SelectRows);
 
+
+    resetPeriodSelectors();
     refreshServerStatus();
     loadAvaiblePrinters();
     loadAvaibleComPorts();
@@ -80,6 +82,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(printBarcodeAction, SIGNAL(triggered(bool)), this, SLOT(printBarcode()));
     connect(openChequeAction, SIGNAL(triggered(bool)), this, SLOT(showChequeWindow()));
     connect(ui->tableCheques, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(showChequeWindow()));
+
+    connect(ui->dateFromSelector, SIGNAL(dateChanged(QDate)), this, SLOT(dateFromChange()));
+    connect(ui->dateToSelector, SIGNAL(dateChanged(QDate)), this, SLOT(dateToChange()));
+    connect(ui->setPeriodButton, SIGNAL(clicked(bool)), this, SLOT(periodChange()));
 }
 
 MainWindow::~MainWindow()
@@ -228,14 +234,14 @@ void MainWindow::showChequeWindow()
     chequeWindow->setVisible(true);
 }
 
-void MainWindow::refreshTableAndTotals()
+void MainWindow::refreshTableAndTotals(QDate startDate, QDate endDate)
 {
     ui->tableCheques->resizeColumnsToContents();
     ui->totalsCheqQuantField->setText(QString::number(ui->tableCheques->model()->rowCount()));
-    ui->totalsDaySumField->setText(QString::number(Application::getInstance()->databaseService->getCurrentDayTotals(), 'f', 2));
-    ui->totalsNalField->setText(QString::number(Application::getInstance()->databaseService->getCurrentDayNal(), 'f', 2));
-    ui->totalsBeznalField->setText(QString::number(Application::getInstance()->databaseService->getCurrentDayBeznal(), 'f', 2));
-    ui->totalsCertField->setText(QString::number(Application::getInstance()->databaseService->getCurrentDayCert(), 'f', 2));
+    ui->totalsDaySumField->setText(QString::number(Application::getInstance()->databaseService->getPeriodTotals(startDate, endDate), 'f', 2));
+    ui->totalsNalField->setText(QString::number(Application::getInstance()->databaseService->getPeriodNal(startDate, endDate), 'f', 2));
+    ui->totalsBeznalField->setText(QString::number(Application::getInstance()->databaseService->getPeriodBeznal(startDate, endDate), 'f', 2));
+    ui->totalsCertField->setText(QString::number(Application::getInstance()->databaseService->getPeriodCert(startDate, endDate), 'f', 2));
 
 }
 
@@ -251,5 +257,29 @@ void MainWindow::printBarcode()
 void MainWindow::printAllBarcodes()
 {
     Application::getInstance()->printService->printBarcode(
-                Application::getInstance()->databaseService->getAllChequesCurrentDay());
+                Application::getInstance()->databaseService->getAllChequesByPeriod(ui->dateFromSelector->date(), ui->dateToSelector->date()));
+}
+
+void MainWindow::dateFromChange()
+{
+    if(ui->dateFromSelector->date() > ui->dateToSelector->date())
+        ui->dateToSelector->setDate(ui->dateFromSelector->date());
+}
+
+void MainWindow::dateToChange()
+{
+    if(ui->dateToSelector->date() < ui->dateFromSelector->date())
+        ui->dateFromSelector->setDate(ui->dateToSelector->date());
+}
+
+void MainWindow::periodChange()
+{
+    Application::getInstance()->databaseService->refreshModel(ui->dateFromSelector->date(), ui->dateToSelector->date());
+    this->refreshTableAndTotals(ui->dateFromSelector->date(), ui->dateToSelector->date());
+}
+
+void MainWindow::resetPeriodSelectors()
+{
+    ui->dateFromSelector->setDate(QDate::currentDate());
+    ui->dateToSelector->setDate(QDate::currentDate());
 }

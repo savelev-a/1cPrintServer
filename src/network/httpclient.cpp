@@ -34,7 +34,7 @@ void HttpClient::readClient()
     {
         QByteArray bytes(socket->readLine());
         QString line = codec->toUnicode(bytes);
-        qDebug() << line;
+        //qDebug() << line;
 
         if(httpPostBodyLoadMode)
         {
@@ -129,6 +129,7 @@ void HttpClient::processRequest()
             }
             Application::getInstance()->databaseService->refreshModel();
             Application::getInstance()->mainWindow->refreshTableAndTotals();
+            Application::getInstance()->mainWindow->resetPeriodSelectors();
         }
 
         httpPostWriteReply(NoError, QString::number(chequesArray.size()));

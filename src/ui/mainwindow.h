@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSystemTrayIcon>
+#include <QDate>
 
 namespace Ui {
 class MainWindow;
@@ -18,7 +19,8 @@ public:
 
 public slots:
     void refreshServerStatus();
-    void refreshTableAndTotals();
+    void refreshTableAndTotals(QDate startDate = QDate::currentDate(), QDate endDate = QDate::currentDate());
+    void resetPeriodSelectors();
 
 private slots:
     void showWindowByTrayActivation(QSystemTrayIcon::ActivationReason reason);
@@ -33,6 +35,10 @@ private slots:
     void printBarcode();
     void printAllBarcodes();
     void showChequeWindow();
+
+    void dateFromChange();
+    void dateToChange();
+    void periodChange();
 
 
 private:

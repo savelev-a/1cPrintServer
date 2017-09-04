@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlQueryModel>
+#include  <QDate>
 
 #include "model/cheque.h"
 #include "model/chequelistmodel.h"
@@ -18,11 +19,17 @@ public:
     QString getLastError() const;
     bool saveCheque(const Cheque &cheque);
     Cheque getChequeById(int id);
+    QList<Cheque> getAllChequesByPeriod(QDate startDate, QDate endDate);
     QList<Cheque> getAllChequesCurrentDay();
-    void refreshModel();
+    void refreshModel(QDate startDate = QDate::currentDate(), QDate endDate = QDate::currentDate());
 
     ChequeListModel *chequesModel;
     ChequeLinesModel* getChequeLinesModel(const Cheque &cheque);
+
+    double getPeriodTotals(QDate startDate, QDate endDate);
+    double getPeriodNal(QDate startDate, QDate endDate);
+    double getPeriodBeznal(QDate startDate, QDate endDate);
+    double getPeriodCert(QDate startDate, QDate endDate);
 
     double getCurrentDayTotals();
     double getCurrentDayNal();

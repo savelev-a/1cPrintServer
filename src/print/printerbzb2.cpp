@@ -97,7 +97,7 @@ void PrinterBZB2::printBarcode(const QString &barcodeStr)
         QByteArray data;
 
         data.append(0x1B);
-        data.append("A14");
+        data.append("A12");
 
         //data.append(0x1B);
         //data.append("M3");
@@ -234,7 +234,10 @@ bool PrinterBZB2::printChequeBarcodes(const QList<Cheque> cheques)
             //printLine(3, "                          ");
             printBarcode(line.barcode);
         }
-        //printLine(3, "==========================");
+        printLine(3, "                          ");
+        printLine(3, "                          ");
+        printLine(3, "                          ");
+        printLine(3, "                          ");
     }
     endCheque();
 

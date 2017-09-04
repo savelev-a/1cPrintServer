@@ -22,6 +22,9 @@ ChequeWindow::ChequeWindow(const Cheque &cheque, QWidget *parent) :
     ui->totalDiscountField->setText(QString::number(cheque.getDiscountTotal(), 'f', 2));
     ui->totalsField->setText(QString::number(cheque.getTotalsWithDiscount(), 'f', 2));
     ui->positionsCountField->setText(QString::number(cheque.lines.count()));
+    ui->nalField->setText(QString::number(cheque.paymentNal, 'f', 2));
+    ui->beznalField->setText(QString::number(cheque.paymentBeznal, 'f', 2));
+    ui->certField->setText(QString::number(cheque.paymentCert, 'f', 2));
 
     ui->tableLines->setModel(Application::getInstance()->databaseService->getChequeLinesModel(cheque));
     ui->tableLines->setColumnHidden(0, true);

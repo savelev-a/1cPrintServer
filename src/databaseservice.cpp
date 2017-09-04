@@ -26,7 +26,7 @@ DatabaseService::DatabaseService(QObject *parent) : QObject(parent)
     refreshModel();
     chequesModel->setHeaderData(ChequeListModel::IdxCol, Qt::Horizontal, "idx");
     chequesModel->setHeaderData(ChequeListModel::ChequeNumCol, Qt::Horizontal, "Номер чека");
-    chequesModel->setHeaderData(ChequeListModel::DatetimeCol, Qt::Horizontal, "Время");
+    chequesModel->setHeaderData(ChequeListModel::DatetimeCol, Qt::Horizontal, "Дата / Время");
     chequesModel->setHeaderData(ChequeListModel::SellerCol, Qt::Horizontal, "Продавец");
     chequesModel->setHeaderData(ChequeListModel::SummCol, Qt::Horizontal, "Сумма");
 
@@ -140,17 +140,15 @@ Cheque DatabaseService::getChequeById(int id)
 
     return cheque;
 }
-
-QList<Cheque> DatabaseService::getAllChequesCurrentDay()
+QList<Cheque> DatabaseService::getAllChequesByPeriod(QDate startDate, QDate endDate)
 {
     QList<Cheque> resultList;
-    QDate currentDate = QDate::currentDate();
 
     QSqlQuery queryCheque("SELECT * "
                           "FROM cheque "
                           "WHERE datetime BETWEEN \'"
-                          + currentDate.toString("yyyy-MM-ddT00:00:00")
-                          + "\' AND \'" + currentDate.toString("yyyy-MM-ddT23:59:59")
+                          + startDate.toString("yyyy-MM-ddT00:00:00")
+                          + "\' AND \'" + endDate.toString("yyyy-MM-ddT23:59:59")
                           + "\'");
 
     while(queryCheque.next())
@@ -191,17 +189,25 @@ QList<Cheque> DatabaseService::getAllChequesCurrentDay()
     return resultList;
 }
 
-void DatabaseService::refreshModel()
+QList<Cheque> DatabaseService::getAllChequesCurrentDay()
 {
-    QDate currentDate = QDate::currentDate();
+    return getAllChequesByPeriod(QDate::currentDate(), QDate::currentDate());
+}
 
+void DatabaseService::refreshModel(QDate startDate, QDate endDate)
+{
     chequesModel->setQuery("SELECT id, ch_id, datetime, seller, totals "
                            "FROM cheque "
                            "WHERE datetime BETWEEN \'"
-                           + currentDate.toString("yyyy-MM-ddT00:00:00")
-                           + "\' AND \'" + currentDate.toString("yyyy-MM-ddT23:59:59")
+                           + startDate.toString("yyyy-MM-ddT00:00:00")
+                           + "\' AND \'" + endDate.toString("yyyy-MM-ddT23:59:59")
                            + "\'", db);
 }
+
+//void DatabaseService::refreshModel()
+//{
+//    refreshModel(QDate::currentDate(), QDate::currentDate());
+//}
 
 ChequeLinesModel* DatabaseService::getChequeLinesModel(const Cheque &cheque)
 {
@@ -219,16 +225,15 @@ ChequeLinesModel* DatabaseService::getChequeLinesModel(const Cheque &cheque)
     return chequeLinesModel;
 }
 
-double DatabaseService::getCurrentDayTotals()
+double DatabaseService::getPeriodTotals(QDate startDate, QDate endDate)
 {
-    QDate currentDate = QDate::currentDate();
     double result = 0.0;
 
     QSqlQuery query("SELECT SUM(totals) AS day_totals "
                     "FROM cheque "
                     "WHERE datetime BETWEEN \'"
-                    + currentDate.toString("yyyy-MM-ddT00:00:00")
-                    + "\' AND \'" + currentDate.toString("yyyy-MM-ddT23:59:59")
+                    + startDate.toString("yyyy-MM-ddT00:00:00")
+                    + "\' AND \'" + endDate.toString("yyyy-MM-ddT23:59:59")
                     + "\'");
 
     query.first();
@@ -238,17 +243,16 @@ double DatabaseService::getCurrentDayTotals()
     return result;
 }
 
-double DatabaseService::getCurrentDayNal()
+double DatabaseService::getPeriodNal(QDate startDate, QDate endDate)
 {
-    QDate currentDate = QDate::currentDate();
     double result = 0.0;
 
     QSqlQuery query("SELECT SUM(paymentNal) AS day_nal_income, "
                     "SUM(sdacha) AS day_sdacha "
                     "FROM cheque "
                     "WHERE datetime BETWEEN \'"
-                    + currentDate.toString("yyyy-MM-ddT00:00:00")
-                    + "\' AND \'" + currentDate.toString("yyyy-MM-ddT23:59:59")
+                    + startDate.toString("yyyy-MM-ddT00:00:00")
+                    + "\' AND \'" + endDate.toString("yyyy-MM-ddT23:59:59")
                     + "\'");
 
     query.first();
@@ -258,16 +262,15 @@ double DatabaseService::getCurrentDayNal()
     return result;
 }
 
-double DatabaseService::getCurrentDayBeznal()
+double DatabaseService::getPeriodBeznal(QDate startDate, QDate endDate)
 {
-    QDate currentDate = QDate::currentDate();
     double result = 0.0;
 
     QSqlQuery query("SELECT SUM(paymentBeznal) AS beznal_totals "
                     "FROM cheque "
                     "WHERE datetime BETWEEN \'"
-                    + currentDate.toString("yyyy-MM-ddT00:00:00")
-                    + "\' AND \'" + currentDate.toString("yyyy-MM-ddT23:59:59")
+                    + startDate.toString("yyyy-MM-ddT00:00:00")
+                    + "\' AND \'" + endDate.toString("yyyy-MM-ddT23:59:59")
                     + "\'");
 
     query.first();
@@ -277,16 +280,15 @@ double DatabaseService::getCurrentDayBeznal()
     return result;
 }
 
-double DatabaseService::getCurrentDayCert()
+double DatabaseService::getPeriodCert(QDate startDate, QDate endDate)
 {
-    QDate currentDate = QDate::currentDate();
     double result = 0.0;
 
     QSqlQuery query("SELECT SUM(paymentCert) AS cert_totals "
                     "FROM cheque "
                     "WHERE datetime BETWEEN \'"
-                    + currentDate.toString("yyyy-MM-ddT00:00:00")
-                    + "\' AND \'" + currentDate.toString("yyyy-MM-ddT23:59:59")
+                    + startDate.toString("yyyy-MM-ddT00:00:00")
+                    + "\' AND \'" + endDate.toString("yyyy-MM-ddT23:59:59")
                     + "\'");
 
     query.first();
@@ -294,4 +296,24 @@ double DatabaseService::getCurrentDayCert()
     result = query.value("cert_totals").toDouble();
 
     return result;
+}
+
+double DatabaseService::getCurrentDayTotals()
+{
+    return getPeriodTotals(QDate::currentDate(), QDate::currentDate());
+}
+
+double DatabaseService::getCurrentDayNal()
+{
+    return getPeriodTotals(QDate::currentDate(), QDate::currentDate());
+}
+
+double DatabaseService::getCurrentDayBeznal()
+{
+    return getPeriodBeznal(QDate::currentDate(), QDate::currentDate());
+}
+
+double DatabaseService::getCurrentDayCert()
+{
+    return getPeriodCert(QDate::currentDate(), QDate::currentDate());
 }
