@@ -6,10 +6,9 @@
 
 #include <QDebug>
 
-QSqlDatabase DatabaseService::db = QSqlDatabase::addDatabase("QSQLITE");
-
 DatabaseService::DatabaseService(QObject *parent) : QObject(parent)
 {
+    db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("1cprint.db");
 
     if(!db.open())

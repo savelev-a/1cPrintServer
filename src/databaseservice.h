@@ -37,7 +37,7 @@ public:
     double getCurrentDayCert();
 
 private:
-    static QSqlDatabase db;
+    QSqlDatabase db;
 
     ChequeLinesModel *chequeLinesModel;
 
