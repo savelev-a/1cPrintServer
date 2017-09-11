@@ -8,16 +8,25 @@
 
 PrinterBZB2::PrinterBZB2(QString port, QObject *parent) : QObject(parent)
 {
+#ifdef Q_OS_WIN
+    winPrinter = new WinPrinter(port, this);
+#else
     portFile = new QFile(port, this);
-    codec = QTextCodec::codecForName("866");
+#endif
+
+    codec = QTextCodec::codecForName("CP866");
     isError = false;
 }
 
 void PrinterBZB2::beginCheque(bool printLogo)
 {
-    isError = false;
+#ifdef Q_OS_WIN
+    isError = !winPrinter->openPrinter();
+#else
+    isError = !portFile->open(QFile::WriteOnly);
+#endif
 
-    if(portFile->open(QFile::WriteOnly))
+    if(!isError)
     {
         QByteArray data;
 
@@ -60,12 +69,11 @@ void PrinterBZB2::beginCheque(bool printLogo)
         }
 
 
+#ifdef Q_OS_WIN
+        winPrinter->appendData(data);
+#else
         portFile->write(data);
-    }
-    else
-    {
-        isError = true;
-        emit printerError(portFile->errorString());
+#endif
     }
 }
 
@@ -73,7 +81,7 @@ void PrinterBZB2::printLine(int margin, const QString &line)
 {
     QString marginStr = margin < 10 ? "M0" + QString::number(margin) : "M" + QString::number(margin);
 
-    if(portFile->isOpen())
+    if(!isError)
     {
         QByteArray data;
 
@@ -81,18 +89,18 @@ void PrinterBZB2::printLine(int margin, const QString &line)
         data.append(codec->fromUnicode(marginStr + line));
         data.append(0x0D);
 
+#ifdef Q_OS_WIN
+        winPrinter->appendData(data);
+#else
         portFile->write(data);
+#endif
     }
-    else
-    {
-        isError = true;
-        emit printerError("Порт принтера неожиданно закрылся: " + portFile->fileName());
-    }
+
 }
 
 void PrinterBZB2::printBarcode(const QString &barcodeStr)
 {
-    if(portFile->isOpen())
+    if(!isError)
     {
         QByteArray data;
 
@@ -109,18 +117,18 @@ void PrinterBZB2::printBarcode(const QString &barcodeStr)
         data.append(0x1B);
         data.append("A11");
 
+#ifdef Q_OS_WIN
+        winPrinter->appendData(data);
+#else
         portFile->write(data);
+#endif
     }
-    else
-    {
-        isError = true;
-        emit printerError("Порт принтера неожиданно закрылся: " + portFile->fileName());
-    }
+
 }
 
 void PrinterBZB2::endCheque()
 {
-    if(portFile->isOpen())
+    if(!isError)
     {
         QByteArray data;
 
@@ -136,13 +144,15 @@ void PrinterBZB2::endCheque()
         data.append(0x1B);
         data.append("P01");
 
+#ifdef Q_OS_WIN
+        winPrinter->appendData(data);
+        isError = !(winPrinter->print());
+        isError = !(winPrinter->closePrinter()) || isError;
+#else
         portFile->write(data);
         portFile->close();
-    }
-    else
-    {
-        isError = true;
-        emit printerError("Порт принтера неожиданно закрылся: " + portFile->fileName());
+#endif
+
     }
 
 }
@@ -248,7 +258,11 @@ QString PrinterBZB2::getLastError() const
 {
     if(isError)
     {
+#ifdef Q_OS_WIN
+        return "WinPrinter error";
+#else
         return portFile->errorString();
+#endif
     }
     else
     {

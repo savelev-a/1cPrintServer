@@ -25,7 +25,8 @@ SOURCES += src/main.cpp\
     src/databaseservice.cpp \
     src/ui/chequewindow.cpp \
     src/model/chequelistmodel.cpp \
-    src/model/chequelinesmodel.cpp
+    src/model/chequelinesmodel.cpp \
+    src/print/winprinter.cpp
 
 HEADERS += src/ui/mainwindow.h \
     src/network/webserver.h \
@@ -39,12 +40,14 @@ HEADERS += src/ui/mainwindow.h \
     src/databaseservice.h \
     src/ui/chequewindow.h \
     src/model/chequelistmodel.h \
-    src/model/chequelinesmodel.h
+    src/model/chequelinesmodel.h \
+    src/print/winprinter.h
 
 FORMS   += src/ui/mainwindow.ui \
     src/ui/chequewindow.ui
 
 win32:RC_ICONS += icon.ico
+win32:LIBS += -lwinspool
 
 RESOURCES += \
     res.qrc

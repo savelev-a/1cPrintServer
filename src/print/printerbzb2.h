@@ -9,6 +9,10 @@
 #include "../model/chequeline.h"
 #include "printservice.h"
 
+#ifdef Q_OS_WIN
+#include "winprinter.h"
+#endif
+
 class PrinterBZB2 : public QObject
 {
     Q_OBJECT
@@ -31,9 +35,16 @@ signals:
     void printerError(const QString &errorString);
 
 private:
+#ifdef Q_OS_WIN
+    WinPrinter *winPrinter;
+#else
     QFile *portFile;
+#endif
+
     QTextCodec *codec;
     bool isError;
+
+
 };
 
 #endif // PRINTERBZB2_H

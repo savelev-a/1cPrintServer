@@ -78,7 +78,7 @@ bool PrintService::printBarcode(const QList<Cheque> cheques)
 
 void PrintService::testPrint()
 {
-    PrinterBZB2 bzb2("/dev/usb/lp0");
+    PrinterBZB2 bzb2(Application::getInstance()->settings->value("printerPath", "").toString());
 
     bzb2.beginCheque(Application::getInstance()->settings->value("printLogo").toBool());
     bzb2.printLine(3, "==========================");
