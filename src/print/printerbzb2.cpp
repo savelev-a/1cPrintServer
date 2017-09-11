@@ -34,6 +34,10 @@ void PrinterBZB2::beginCheque(bool printLogo)
         data.append(0x1B);
         data.append("S2");
 
+        //интенсивность 7
+        data.append(0x1B);
+        data.append("D7");
+
         //размер шрифта 1
         data.append(0x1B);
         data.append("A11");

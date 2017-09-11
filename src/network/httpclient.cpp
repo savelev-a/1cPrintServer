@@ -93,7 +93,7 @@ void HttpClient::processRequest()
     else if(request->requestType == POST)
     {
         //qDebug() << request->body;
-        QJsonDocument document = QJsonDocument::fromJson(request->body.toLocal8Bit());
+        QJsonDocument document = QJsonDocument::fromJson(request->body.toUtf8());
         QJsonArray chequesArray = document.array();
 
         if(chequesArray.isEmpty())
